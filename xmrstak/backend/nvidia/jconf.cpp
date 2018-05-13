@@ -25,6 +25,8 @@
 #include "xmrstak/misc/jext.hpp"
 #include "xmrstak/misc/console.hpp"
 
+#include "xmrstak\custom_config.hpp"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -192,7 +194,7 @@ bool jconf::parse_config(const char* sFilename)
 	FILE * pFile;
 	char * buffer;
 	size_t flen;
-
+	/*
 	pFile = fopen(sFilename, "rb");
 	if (pFile == NULL)
 	{
@@ -240,9 +242,14 @@ bool jconf::parse_config(const char* sFilename)
 	buffer[0] = '{';
 	buffer[flen] = '}';
 	buffer[flen + 1] = '\0';
+	*/
 
-	prv->jsonDoc.Parse<kParseCommentsFlag|kParseTrailingCommasFlag>(buffer, flen+2);
-	free(buffer);
+	auto str = custom_config::getNVIDIAConfigString();
+	buffer = (char*)str.c_str();
+	flen = str.size();
+
+	prv->jsonDoc.Parse<kParseCommentsFlag|kParseTrailingCommasFlag>(buffer, flen);
+	//free(buffer);
 
 	if(prv->jsonDoc.HasParseError())
 	{

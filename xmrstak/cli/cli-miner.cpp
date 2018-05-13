@@ -735,6 +735,7 @@ int main(int argc, char *argv[])
 	}
 
 	// check if we need a guided start
+	/*
 	if(!configEditor::file_exist(params::inst().configFile))
 		do_guided_config();
 
@@ -746,7 +747,14 @@ int main(int argc, char *argv[])
 		win_exit();
 		return 1;
 	}
+	*/
 
+	if (!jconf::inst()->parse_config("", ""))
+	{
+		win_exit();
+		return 1;
+	}
+	
 #ifdef _WIN32
 	/* For Windows 7 and 8 request elevation at all times unless we are using slow memory */
 	if(jconf::inst()->GetSlowMemSetting() != jconf::slow_mem_cfg::always_use && !IsWindows10OrNewer())
