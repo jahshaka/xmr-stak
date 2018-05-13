@@ -144,15 +144,17 @@ std::vector<iBackend*>* xmrstak_start_backend(uint32_t threadOffset, miner_work&
 std::vector<iBackend*>* minethd::thread_starter(uint32_t threadOffset, miner_work& pWork)
 {
 	std::vector<iBackend*>* pvThreads = new std::vector<iBackend*>();
-
+	
 	auto miner_algo = ::jconf::inst()->GetCurrentCoinSelection().GetDescription(1).GetMiningAlgoRoot();
 
+	/*
 	if(!configEditor::file_exist(params::inst().configFileNVIDIA))
 	{
 		autoAdjust adjust;
 		if(!adjust.printConfig())
 			return pvThreads;
 	}
+	*/
 
 	if(!jconf::inst()->parse_config())
 	{

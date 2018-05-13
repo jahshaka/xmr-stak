@@ -1,0 +1,24 @@
+XMR-STAK NOTES:
+
+1) remove functions that write settings to files
+2) hardcode default settings in jsconfig files
+	can use `std::string conf = #include "default_cpu_config.cpp"`
+3) params get copied to each backend on load, pass gpu index there
+4) generate params based on gpu:
+	`std::string conf = #include "default_nvidia_config.txt"
+	conf = std::replace(conf.begin(), conf.end(), "$gpuId", environment::inst()->params->gpuIdStr);`
+
+
+bool jconf::parse_file(const char* sFilename, bool main_conf)
+1) use two separate configs here
+
+
+example class
+
+class CustomConfig
+{
+	string getNVIDIAConfigString();
+	string getAMDConfigString();
+	string getPoolConfigString();
+	string getCPUConfigString();
+}
