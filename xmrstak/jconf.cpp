@@ -29,6 +29,8 @@
 #include "xmrstak/misc/console.hpp"
 #include "xmrstak/misc/utility.hpp"
 
+#include "custom_config.hpp"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -358,7 +360,7 @@ bool jconf::parse_file(const char* sFilename, bool main_conf)
 	FILE * pFile;
 	char * buffer;
 	size_t flen;
-
+	/*
 	pFile = fopen(sFilename, "rb");
 	if (pFile == NULL)
 	{
@@ -406,11 +408,27 @@ bool jconf::parse_file(const char* sFilename, bool main_conf)
 	buffer[0] = '{';
 	buffer[flen] = '}';
 	buffer[flen + 1] = '\0';
+	*/
+
+	// false is pools
+	// true is main config
+	std::string bufferStr;
+	if (main_conf) {
+		bufferStr = custom_config::getConfigString();
+		buffer = (char*)bufferStr.c_str();
+		flen = bufferStr.size();
+	}
+	else {
+		bufferStr = custom_config::getPoolConfigString();
+		buffer = (char*)bufferStr.c_str();
+		flen = bufferStr.size();
+	}
+
 
 	Document& root = main_conf ? prv->jsonDoc : prv->jsonDocPools;
 
-	root.Parse<kParseCommentsFlag|kParseTrailingCommasFlag>(buffer, flen+2);
-	free(buffer);
+	root.Parse<kParseCommentsFlag|kParseTrailingCommasFlag>(buffer, flen);
+	//free(buffer);
 
 	if(root.HasParseError())
 	{
