@@ -19,6 +19,9 @@ struct params
 		return *env.pParams;
 	}
 
+	// extra params for directly specifying the gpu to use (nick)
+	int gpuIndex;
+
 	std::string executablePrefix;
 	std::string binaryName;
 	bool useAMD;
@@ -72,7 +75,8 @@ struct params
 		configFileAMD("amd.txt"),
 		rootAMDCacheDir(get_home() + "/.openclcache/"),
 		configFileCPU("cpu.txt"),
-		configFileNVIDIA("nvidia.txt")
+		configFileNVIDIA("nvidia.txt"),
+		gpuIndex(0)
 	{}
 
 };
