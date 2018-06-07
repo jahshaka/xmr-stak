@@ -82,7 +82,7 @@ void help()
 #ifndef CONF_NO_OPENCL
 	cout<<"  --noAMD                    disable the AMD miner backend"<<endl;
 	cout<<"  --noAMDCache               disable the AMD(OpenCL) cache for precompiled binaries"<<endl;
-	cout<<"  --openCLVendor VENDOR      use OpenCL driver of VENDOR and devices [AMD,NVIDIA]"<<endl;
+	cout<<"  --openCLVendor VENDOR      use OpenCL driver of VENDOR and devices [AMD,NVIDIA1]"<<endl;
 	cout<<"                             default: AMD"<<endl;
 	cout<<"  --amd FILE                 AMD backend miner config file"<<endl;
 #endif
@@ -512,6 +512,17 @@ int main(int argc, char *argv[])
 				return 1;
 			}
 			params::inst().configFileNVIDIA = argv[i];
+		}
+		else if (opName.compare("--gpuIndex") == 0)
+		{
+			++i;
+			if (i >= argc)
+			{
+				printer::inst()->print_msg(L0, "No argument for parameter '--gpuIndex' given");
+				win_exit();
+				return 1;
+			}
+			params::inst().gpuIndex = atoi(argv[i]);
 		}
 		else if(opName.compare("--currency") == 0)
 		{
