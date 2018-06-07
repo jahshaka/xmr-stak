@@ -25,7 +25,7 @@
 #include "xmrstak/misc/jext.hpp"
 #include "xmrstak/misc/console.hpp"
 
-#include "xmrstak\custom_config.hpp"
+#include "xmrstak/custom_config.hpp"
 
 #include <stdio.h>
 #include <stdlib.h>

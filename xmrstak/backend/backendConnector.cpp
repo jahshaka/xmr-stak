@@ -77,6 +77,7 @@ std::vector<iBackend*>* BackendConnector::thread_starter(miner_work& pWork)
 #ifndef CONF_NO_OPENCL
 	if(params::inst().useAMD)
 	{
+		printer::inst()->print_msg(L0, "Starting AMD backend");
 		const std::string backendName = xmrstak::params::inst().openCLVendor;
 		plugin amdplugin(backendName, "xmrstak_opencl_backend");
 		std::vector<iBackend*>* amdThreads = amdplugin.startBackend(static_cast<uint32_t>(pvThreads->size()), pWork, environment::inst());
