@@ -791,12 +791,41 @@ int getAMDPlatformIdx()
 	return platformIndex;
 }
 
+size_t GetAMDPlatformIndex()
+{
+	const int PLATFORM_LIST_COUNT = 64;
+	cl_int ret;
+	cl_uint entries;
+	cl_platform_id PlatformIDList[PLATFORM_LIST_COUNT];// 64 is a good number
+
+	if ((ret = clGetPlatformIDs(PLATFORM_LIST_COUNT, PlatformIDList, &entries)) != CL_SUCCESS)
+	{
+		printer::inst()->print_msg(L1, "Error %s when calling clGetPlatformIDs for number of platforms.", err_to_str(ret));
+		return 0;
+	}
+
+	for (unsigned i = 0; i < entries; i++) {
+		size_t infoSize;
+		clGetPlatformInfo(PlatformIDList[i], CL_PLATFORM_VENDOR, 0, NULL, &infoSize);
+		std::vector<char> platformNameVec(infoSize);
+		clGetPlatformInfo(PlatformIDList[i], CL_PLATFORM_VENDOR, infoSize, platformNameVec.data(), NULL);
+		std::string platformName(platformNameVec.data());
+		if (platformName.find("Advanced Micro Devices") != std::string::npos)
+		{
+			return i;
+		}
+	}
+
+	// doesnt matter if it's 0, the index error will be caught and reported further down
+	return 0;
+}
+
 // RequestedDeviceIdxs is a list of OpenCL device indexes
 // NumDevicesRequested is number of devices in RequestedDeviceIdxs list
 // Returns 0 on success, -1 on stupid params, -2 on OpenCL API error
 size_t InitOpenCL(GpuContext* ctx, size_t num_gpus, size_t platform_idx)
 {
-
+	platform_idx = GetAMDPlatformIndex();
 	cl_context opencl_ctx;
 	cl_int ret;
 	cl_uint entries;
@@ -809,11 +838,13 @@ size_t InitOpenCL(GpuContext* ctx, size_t num_gpus, size_t platform_idx)
 
 
 	// The number of platforms naturally is the index of the last platform plus one.
+	/*
 	if(entries <= platform_idx)
 	{
 		printer::inst()->print_msg(L1,"Selected OpenCL platform index %d doesn't exist.", platform_idx);
 		return ERR_STUPID_PARAMS;
 	}
+	*/
 
 	/*MSVC skimping on devel costs by shoehorning C99 to be a subset of C++? Noooo... can't be.*/
 #ifdef __GNUC__
