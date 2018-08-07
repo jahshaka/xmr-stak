@@ -245,7 +245,7 @@ bool jconf::parse_config(const char* sFilename)
 	flen = str.size();
 
 	prv->jsonDoc.Parse<kParseCommentsFlag|kParseTrailingCommasFlag>(buffer, flen);
-	free(buffer);
+	//free(buffer);
 
 	if(prv->jsonDoc.HasParseError())
 	{
