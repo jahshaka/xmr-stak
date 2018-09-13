@@ -16,6 +16,23 @@ list(APPEND CMAKE_PREFIX_PATH "$ENV{CUDA_ROOT}")
 # allow user to extent CMAKE_PREFIX_PATH via environment variable
 list(APPEND CMAKE_PREFIX_PATH "$ENV{CMAKE_PREFIX_PATH}")
 
+
+if(${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
+    set(OutputDir ${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}/xmr-stak)
+else()
+    set(OutputDir ${CMAKE_BINARY_DIR}/bin/xmr-stak)
+endif()
+message("dest dir ${OutputDir}")
+
+#https://stackoverflow.com/questions/7747857/in-cmake-how-do-i-work-around-the-debug-and-release-directories-visual-studio-2
+foreach( OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES} )
+    string( TOUPPER ${OUTPUTCONFIG} OUTPUTCONFIG )
+    set( CMAKE_RUNTIME_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${OutputDir} )
+    set( CMAKE_LIBRARY_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${OutputDir} )
+    set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${OutputDir} )
+endforeach( OUTPUTCONFIG CMAKE_CONFIGURATION_TYPES )
+
+
 ################################################################################
 # CMake user options
 ################################################################################
@@ -541,6 +558,7 @@ if(OpenCL_FOUND)
     file(GLOB OPENCLSRCFILES
         "xmrstak/backend/amd/amd_gpu/*.cpp"
         "xmrstak/backend/amd/*.cpp")
+
     add_library(xmrstak_opencl_backend
         SHARED
         ${OPENCLSRCFILES}
@@ -559,38 +577,13 @@ else()
     add_executable(xmr-stak ${SRCFILES_CPP})
 endif()
 
-set(EXECUTABLE_OUTPUT_PATH "bin" CACHE STRING "Path to place executables relative to ${CMAKE_INSTALL_PREFIX}")
-set(LIBRARY_OUTPUT_PATH "bin" CACHE STRING "Path to place libraries relative to ${CMAKE_INSTALL_PREFIX}")
 
-target_link_libraries(xmr-stak ${LIBS} xmr-stak-c xmr-stak-backend xmr-stak-asm)
+target_link_libraries(xmr-stak ${LIBS} xmr-stak-c xmr-stak-backend)
 
-################################################################################
-# Install
-################################################################################
+if(OpenCL_FOUND)
+	add_dependencies(xmr-stak xmrstak_opencl_backend)
+endif()
 
-# do not install the binary if the project and install are equal
-if( NOT CMAKE_INSTALL_PREFIX STREQUAL PROJECT_BINARY_DIR )
-    install(TARGETS xmr-stak
-            RUNTIME DESTINATION "${CMAKE_INSTALL_PREFIX}/${EXECUTABLE_OUTPUT_PATH}")
-    if(CUDA_FOUND)
-        if(WIN32)
-            install(TARGETS xmrstak_cuda_backend
-                RUNTIME DESTINATION "${CMAKE_INSTALL_PREFIX}/${LIBRARY_OUTPUT_PATH}")
-        else()
-            install(TARGETS xmrstak_cuda_backend
-                LIBRARY DESTINATION "${CMAKE_INSTALL_PREFIX}/${LIBRARY_OUTPUT_PATH}")
-        endif()
-    endif()
-    if(OpenCL_FOUND)
-        if(WIN32)
-            install(TARGETS xmrstak_opencl_backend
-                RUNTIME DESTINATION "${CMAKE_INSTALL_PREFIX}/${LIBRARY_OUTPUT_PATH}")
-        else()
-            install(TARGETS xmrstak_opencl_backend
-                LIBRARY DESTINATION "${CMAKE_INSTALL_PREFIX}/${LIBRARY_OUTPUT_PATH}")
-        endif()
-    endif()
-else()
-    # this rule is used if the install prefix is the build directory
-    install(CODE "MESSAGE(\"xmr-stak installed to folder 'bin'\")")
+if(CUDA_FOUND)
+	add_dependencies(xmr-stak xmrstak_cuda_backend)
 endif()
