@@ -91,7 +91,7 @@ public:
 		*/
 		std::string settings = R"({
 	"gpu_threads_conf" : [
-{ "index" : $gpuIndex, "intensity" : 1000, "worksize" : 8, "affine_to_cpu" : false, "strided_index" : true, "mem_chunk" : 2, "comp_mode" : true },
+{ "index" : $gpuIndex, "intensity" : 1000, "worksize" : 8, "affine_to_cpu" : false, "strided_index" : true, "mem_chunk" : 2, "comp_mode" : true,"unroll":8 },
 ],
 "platform_index" : 0,
 })";
