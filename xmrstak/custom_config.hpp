@@ -64,6 +64,7 @@ public:
 			"threads" : 20, "blocks" : 15,
 			"bfactor" : 8, "bsleep" : 25,
 			"affine_to_cpu" : false, "sync_mode" : 3,
+			"mem_mode":0
 			},
 
 			]
