@@ -379,6 +379,9 @@ void do_guided_config()
 
 int main(int argc, char *argv[])
 {
+	// disbable buffering of stdout
+	setbuf(stdout, NULL);
+
 #ifndef CONF_NO_TLS
 	SSL_library_init();
 	SSL_load_error_strings();
